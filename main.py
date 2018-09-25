@@ -13,9 +13,9 @@ import torchvision.transforms as transforms
 import torchvision.utils as vutils
 from torch.autograd import Variable
 
-
+# Code adapted from Soumith's DCGAN implementation
 parser = argparse.ArgumentParser()
-parser.add_argument('--dataset', required=True, help='cifar10 | lsun | imagenet | folder | lfw | fake')
+parser.add_argument('--dataset', required=True, help='cifar10 | fake')
 parser.add_argument('--dataroot', required=True, help='path to dataset')
 parser.add_argument('--workers', type=int, help='number of data loading workers', default=2)
 parser.add_argument('--batchSize', type=int, default=64, help='input batch size')
@@ -54,24 +54,7 @@ cudnn.benchmark = True
 if torch.cuda.is_available() and not opt.cuda:
     print("WARNING: You have a CUDA device, so you should probably run with --cuda")
 
-if opt.dataset in ['imagenet', 'folder', 'lfw']:
-    # folder dataset
-    dataset = dset.ImageFolder(root=opt.dataroot,
-                               transform=transforms.Compose([
-                                   transforms.Scale(opt.imageSize),
-                                   transforms.CenterCrop(opt.imageSize),
-                                   transforms.ToTensor(),
-                                   transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-                               ]))
-elif opt.dataset == 'lsun':
-    dataset = dset.LSUN(db_path=opt.dataroot, classes=['bedroom_train'],
-                        transform=transforms.Compose([
-                            transforms.Scale(opt.imageSize),
-                            transforms.CenterCrop(opt.imageSize),
-                            transforms.ToTensor(),
-                            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-                        ]))
-elif opt.dataset == 'cifar10':
+if opt.dataset == 'cifar10':
     dataset = dset.CIFAR10(root=opt.dataroot, download=True,
                            transform=transforms.Compose([
                                transforms.Scale(opt.imageSize),
